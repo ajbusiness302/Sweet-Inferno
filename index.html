@@ -375,6 +375,24 @@
 
   #cart-total { font-family: 'Cinzel Decorative', serif; font-size: 1.3rem; color: var(--gold-light); }
 
+  /* Flavor notes */
+  #flavor-notes {
+    background: none;
+    border: 1px solid var(--gold-dim);
+    color: var(--cream);
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    padding: 0.45rem 0.8rem;
+    width: 100%;
+    outline: none;
+    resize: none;
+    transition: border-color 0.2s;
+    line-height: 1.5;
+  }
+  #flavor-notes::placeholder { color: rgba(245,230,200,0.3); }
+  #flavor-notes:focus { border-color: var(--gold); }
+
   /* Phone + Belladonna row */
   #order-fields { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
 
@@ -668,6 +686,7 @@
         <span id="cart-toggle-label">Your Order ▴</span>
         <span id="cart-total">$0.00</span>
       </div>
+      <textarea id="flavor-notes" placeholder="flavor notes — let Sweet know what you'd like… (e.g. 3 cookies: 2 brown butter choc chip, 1 s'mores)"></textarea>
       <div id="order-fields">
         <input type="tel" id="phone-input" placeholder="your phone number" maxlength="15" autocomplete="tel">
         <input type="text" id="belladonna-input" placeholder="offering code…" autocomplete="off">
@@ -697,12 +716,12 @@ const stripe = Stripe('pk_test_51Tui0fF7CMQyluJ8TwOAo2vaD3NrCEkDHs40LRjJhgT5qF7c
 
 // ══ SPOTIFY PLAYLIST IDs — fill in after you build playlists ══
 const PLAYLISTS = {
-  wilmington: '',   // paste Spotify playlist ID here
-  dunleith:   '',
-  oakmont:    '',
-  westside:   '',
-  northside:  '',
-  eastside:   '',
+  wilmington: '0irs1GTLteyj48lXnnyHn1',
+  dunleith:   '2jwKzpaPKjYFtxlKMT0Vzn',
+  oakmont:    '6CYhKmt2QedS6hAtoiiQGJ',
+  westside:   '4Iv046fl8iwxSaABtagwDj',
+  northside:  '6pxIlA4vBnsEyMpMxoM62s',
+  eastside:   '6AQzAILquNzchD7bUwk6AL',
 };
 
 // ══ MENU DATA ══
@@ -917,10 +936,12 @@ async function startCheckout() {
   }
 
   try {
+    const flavorNotes = document.getElementById('flavor-notes').value.trim();
+
     const res = await fetch('/.netlify/functions/create-checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ lineItems, phone }),
+      body: JSON.stringify({ lineItems, phone, flavorNotes }),
     });
 
     const data = await res.json();
